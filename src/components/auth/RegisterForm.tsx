@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Mail, Lock, UserCheck, UserPlus, ArrowRight, Sparkles } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
 
 type UserType = 'talent' | 'employer';
 
@@ -17,6 +18,7 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
+  const showToast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,12 +31,42 @@ export default function RegisterForm() {
       setError('');
       setLoading(true);
       await register(email, password, userType);
-      // RouteGuard will handle the redirect based on user role
-    } catch (error) {
-      setError('Failed to create an account');
-      console.error(error);
+      
+      // Show success message
+      showToast('Account created successfully! Please sign in.', {
+        type: 'success',
+        duration: 3000
+      });
+      
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        router.push('/login');
+      }, 1500);
+      
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      
+      let errorMessage = 'Failed to create an account. Please try again.';
+      
+      // More specific error messages based on error code
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already registered. Please use a different email or sign in.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password should be at least 6 characters long.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      }
+      
+      // Show error toast
+      showToast(errorMessage, {
+        type: 'error',
+        duration: 5000
+      });
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

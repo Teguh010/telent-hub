@@ -8,6 +8,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { TalentProfile } from '@/services/talentService';
 import { recordSwipeAction } from '@/services/talentService';
 
+// Add a default talent profile to prevent undefined errors
+const DEFAULT_TALENT: Partial<TalentProfile> = {
+  id: 'default',
+  name: 'No talent available',
+  email: '',
+  country: 'Unknown',
+  bio: 'No information available',
+  cultureStyle: '',
+  cultureScore: 0,
+  skills: [],
+  languages: [],
+  profileImageUrl: '',
+  videoPitch: ''
+};
+
 interface TalentSwiperProps {
   onSwipeComplete?: () => void;
 }
@@ -152,7 +167,7 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
   const handleSwipe = async (direction: 'left' | 'right') => {
     if (!user || currentIndex >= talents.length) return;
 
-    const currentTalent = talents[currentIndex];
+    const currentTalent = talents[currentIndex] || DEFAULT_TALENT;
     
     try {
       // Record the swipe action
@@ -568,15 +583,18 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         <span className="text-sm font-medium text-white">Skills</span>
                       </div>
                 <div className="flex flex-wrap gap-2">
-                        {currentTalent.skills.slice(0, 3).map((skill, index) => (
+                        {(currentTalent.skills || []).slice(0, 3).map((skill, index) => (
                           <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                        {currentTalent.skills.length > 3 && (
-                          <Badge variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
-                            +{currentTalent.skills.length - 3} more
+                            {skill}
                           </Badge>
+                        ))}
+                        {currentTalent.skills?.length > 3 && (
+                          <Badge variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
+                            +{(currentTalent.skills.length - 3)} more
+                          </Badge>
+                        )}
+                        {(!currentTalent.skills || currentTalent.skills.length === 0) && (
+                          <span className="text-xs text-white/60">No skills listed</span>
                         )}
                 </div>
               </div>
@@ -588,11 +606,19 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         <span className="text-sm font-medium text-white">Languages</span>
                       </div>
                 <div className="flex flex-wrap gap-2">
-                  {currentTalent.languages.map((language, index) => (
-                          <Badge key={index} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30 text-xs">
-                      {language}
-                    </Badge>
-                  ))}
+                  {(currentTalent.languages || []).length > 0 ? (
+                    currentTalent.languages.map((language, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary" 
+                        className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30 text-xs"
+                      >
+                        {language}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-xs text-white/60">No languages listed</span>
+                  )}
                 </div>
               </div>
 

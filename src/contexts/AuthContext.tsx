@@ -10,7 +10,7 @@ import {
   UserCredential
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 type UserRole = 'talent' | 'employer' | 'admin';
@@ -143,8 +143,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const register = (email: string, password: string, role: UserRole) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const register = async (email: string, password: string, role: UserRole) => {
+    // First create the user account
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Create a user profile in the appropriate collection based on role
+    if (role === 'talent' || role === 'employer') {
+      const userData = {
+        uid: user.uid,
+        email: email,
+        role: role,
+        name: email.split('@')[0],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Save to the appropriate collection
+      const collectionName = role === 'talent' ? 'talents' : 'employers';
+      await setDoc(doc(db, collectionName, user.uid), userData);
+      
+      // Update the local user profile
+      setUserProfile({
+        uid: user.uid,
+        email: email,
+        role: role,
+        name: email.split('@')[0]
+      });
+    }
+    
+    return userCredential;
   };
 
   const logout = () => {

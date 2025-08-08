@@ -7,6 +7,7 @@ import '@/styles/colors.css';
 
 import { AuthProvider } from '@/contexts/AuthContext';
 import RouteGuard from '@/components/auth/RouteGuard';
+import { ToastProvider } from '@/components/ui/Toast';
 
 export default function RootLayout({
   children,
@@ -16,11 +17,13 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <AuthProvider>
-          <RouteGuard>
+        <ToastProvider>
+          <AuthProvider>
+            <RouteGuard>
             {children}
-          </RouteGuard>
-        </AuthProvider>
+            </RouteGuard>
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );
