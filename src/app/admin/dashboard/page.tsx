@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <Card className="rounded-md border border-gradient-to-r from-purple-500/20 to-pink-500/20 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+        <Card className="rounded-md border border-gradient-to-r from-blue-500/20 to-cyan-500/20 bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+        <Card className="rounded-md border border-gradient-to-r from-green-500/20 to-emerald-500/20 bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+        <Card className="rounded-md border border-gradient-to-r from-orange-500/20 to-red-500/20 bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -116,7 +116,7 @@ export default function AdminDashboardPage() {
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-purple-500/20 to-pink-500/20 bg-white/50 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
@@ -141,7 +141,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-blue-500/20 to-cyan-500/20 bg-white/50 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>

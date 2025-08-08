@@ -60,7 +60,7 @@ export default function AdminSettingsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Platform Settings */}
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-purple-500/20 to-pink-500/20 bg-white/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Globe className="w-5 h-5" />
@@ -107,7 +107,7 @@ export default function AdminSettingsPage() {
         </Card>
 
         {/* Feature Toggles */}
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-blue-500/20 to-cyan-500/20 bg-white/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Settings className="w-5 h-5" />
@@ -166,7 +166,7 @@ export default function AdminSettingsPage() {
         </Card>
 
         {/* System Settings */}
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-green-500/20 to-emerald-500/20 bg-white/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Shield className="w-5 h-5" />
@@ -209,7 +209,7 @@ export default function AdminSettingsPage() {
         </Card>
 
         {/* Statistics */}
-        <Card>
+        <Card className="rounded-md border border-gradient-to-r from-orange-500/20 to-red-500/20 bg-white/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Database className="w-5 h-5" />

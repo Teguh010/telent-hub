@@ -123,7 +123,7 @@ export default function AdminEmployersPage() {
       {/* Employers List */}
       <div className="space-y-4">
         {filteredEmployers.map((employer) => (
-          <Card key={employer.id}>
+          <Card key={employer.id} className="rounded-md border border-gradient-to-r from-blue-500/20 to-cyan-500/20 bg-white/50 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">

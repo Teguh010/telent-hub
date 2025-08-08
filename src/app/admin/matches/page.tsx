@@ -134,7 +134,7 @@ export default function AdminMatchesPage() {
       {/* Matches List */}
       <div className="space-y-4">
         {filteredMatches.map((match) => (
-          <Card key={match.id}>
+          <Card key={match.id} className="rounded-md border border-gradient-to-r from-green-500/20 to-emerald-500/20 bg-white/50 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">

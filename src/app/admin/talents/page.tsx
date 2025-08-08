@@ -109,7 +109,7 @@ export default function AdminTalentsPage() {
       {/* Talents List */}
       <div className="space-y-4">
         {filteredTalents.map((talent) => (
-          <Card key={talent.id}>
+          <Card key={talent.id} className="rounded-md border border-gradient-to-r from-purple-500/20 to-pink-500/20 bg-white/50 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">

@@ -125,7 +125,7 @@ export default function AdminMessagesPage() {
       {/* Messages List */}
       <div className="space-y-4">
         {filteredMessages.map((message) => (
-          <Card key={message.id}>
+          <Card key={message.id} className="rounded-md border border-gradient-to-r from-orange-500/20 to-red-500/20 bg-white/50 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
