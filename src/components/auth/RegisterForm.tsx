@@ -28,8 +28,8 @@ export default function RegisterForm() {
     try {
       setError('');
       setLoading(true);
-      await register(email, password);
-      router.push(`/dashboard/${userType}`);
+      await register(email, password, userType);
+      // RouteGuard will handle the redirect based on user role
     } catch (error) {
       setError('Failed to create an account');
       console.error(error);

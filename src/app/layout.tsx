@@ -6,6 +6,7 @@ import '@/styles/globals.css';
 import '@/styles/colors.css';
 
 import { AuthProvider } from '@/contexts/AuthContext';
+import RouteGuard from '@/components/auth/RouteGuard';
 
 export default function RootLayout({
   children,
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html>
       <body>
         <AuthProvider>
-          {children}
+          <RouteGuard>
+            {children}
+          </RouteGuard>
         </AuthProvider>
       </body>
     </html>

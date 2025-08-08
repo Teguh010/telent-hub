@@ -49,9 +49,64 @@ function handleSkip(id: string) {
 
 const HomePage = () => {
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200">
-      <div className="w-full max-w-md h-full">
-        <TalentSwiper talents={dummyTalents} onLike={handleLike} onSkip={handleSkip} />
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl text-center">
+        {/* Hero Section */}
+        <div className="mb-12">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+            Talent Hub
+          </h1>
+          <p className="text-xl md:text-2xl text-white/80 mb-8">
+            Connect talented professionals with innovative companies
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all">
+              Get Started
+            </button>
+            <button className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/20 transition-all">
+              Learn More
+            </button>
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+            <Briefcase className="w-12 h-12 text-white mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">For Employers</h3>
+            <p className="text-white/80">Find the perfect talent for your company</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+            <Heart className="w-12 h-12 text-white mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">For Talents</h3>
+            <p className="text-white/80">Discover amazing opportunities</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+            <Star className="w-12 h-12 text-white mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">Smart Matching</h3>
+            <p className="text-white/80">AI-powered matching algorithm</p>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-white">1,247+</div>
+            <div className="text-white/80">Talents</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-white">89+</div>
+            <div className="text-white/80">Companies</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-white">342+</div>
+            <div className="text-white/80">Matches</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-white">95%</div>
+            <div className="text-white/80">Success Rate</div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ export default function LoginForm() {
       setError('');
       setLoading(true);
       await login(email, password);
-      router.push('/dashboard');
+      // RouteGuard will handle the redirect based on user role
     } catch (error) {
       setError('Failed to sign in');
       console.error(error);
