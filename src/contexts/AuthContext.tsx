@@ -68,23 +68,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Get user profile data
-  const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
+  const getUserProfile = async (uid: string, userEmail?: string | null): Promise<UserProfile | null> => {
     try {
       const role = await getUserRole(uid);
-      if (!role) return null;
+      
+      // If no role found, check if we have an email to create a basic profile
+      if (!role) {
+        if (userEmail) {
+          console.log(`No role found for user ${uid}, creating basic profile`);
+          return {
+            uid,
+            email: userEmail,
+            role: 'talent', // Default role
+            name: userEmail.split('@')[0] // Use username part of email as name
+          };
+        }
+        return null;
+      }
 
-      const userDoc = await getDoc(doc(db, role === 'admin' ? 'admins' : role === 'talent' ? 'talents' : 'employers', uid));
+      // Try to get the user's profile from the appropriate collection
+      const collectionName = role === 'admin' ? 'admins' : role === 'talent' ? 'talents' : 'employers';
+      const userDoc = await getDoc(doc(db, collectionName, uid));
+      
       if (userDoc.exists()) {
         const data = userDoc.data();
         return {
           uid,
-          email: data.email || '',
+          email: data.email || userEmail || '',
           role,
-          name: data.name || data.companyName || ''
+          name: data.name || data.companyName || userEmail?.split('@')[0] || 'User'
+        };
+      } else {
+        // If document doesn't exist but we have a role, create a basic profile
+        console.log(`Profile document not found for ${role} ${uid}, creating basic profile`);
+        return {
+          uid,
+          email: userEmail || '',
+          role,
+          name: userEmail?.split('@')[0] || 'User'
         };
       }
-
-      return null;
     } catch (error) {
       console.error('Error getting user profile:', error);
       return null;
@@ -93,14 +116,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const profile = await getUserProfile(user.uid);
-        setUserProfile(profile);
-      } else {
-        setUserProfile(null);
+      setLoading(true);
+      try {
+        if (user) {
+          console.log('Auth state changed, user signed in:', user.uid);
+          const profile = await getUserProfile(user.uid, user.email);
+          console.log('User profile loaded:', profile);
+          setUserProfile(profile);
+          setUser(user);
+        } else {
+          console.log('Auth state changed, no user signed in');
+          setUser(null);
+          setUserProfile(null);
+        }
+      } catch (error) {
+        console.error('Error in auth state change:', error);
+      } finally {
+        setLoading(false);
       }
-      setUser(user);
-      setLoading(false);
     });
 
     return () => unsubscribe();
