@@ -94,7 +94,13 @@ export default function LoginForm() {
             <input type="checkbox" className="form-checkbox mr-2 bg-white/10 border-white/30" />
             Remember me
           </label>
-          <a href="#" className="text-purple-200 hover:text-white">Forgot password?</a>
+          <div className="flex gap-2">
+            <a href="#" className="text-purple-200 hover:text-white">Forgot password?</a>
+            <span className="text-white/50">|</span>
+            <Link href="/debug" className="text-purple-200 hover:text-white">
+              Debug
+            </Link>
+          </div>
         </div>
 
         <button

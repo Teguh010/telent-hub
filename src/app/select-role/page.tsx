@@ -30,9 +30,9 @@ export default function SelectRolePage() {
 
       // Redirect to appropriate dashboard
       if (role === 'talent') {
-        router.push('/dashboard/talent/discover');
+        router.push('/talent/discover');
       } else {
-        router.push('/dashboard/employer/discover');
+        router.push('/employer/discover');
       }
     } catch (error) {
       console.error('Error creating user profile:', error);

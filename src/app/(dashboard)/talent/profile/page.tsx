@@ -46,7 +46,19 @@ export default function TalentProfile() {
         
         if (docSnap.exists()) {
           console.log('Profile found:', docSnap.data());
-          setProfile(docSnap.data() as TalentProfile);
+          const data = docSnap.data();
+          setProfile({
+            name: data.name || 'New Talent',
+            email: data.email || '',
+            country: data.country || 'Unknown',
+            skills: data.skills || [],
+            languages: data.languages || [],
+            bio: data.bio || 'No bio available yet.',
+            videoPitch: data.videoPitch || '',
+            cultureStyle: data.cultureStyle || '',
+            cultureScore: data.cultureScore || 0,
+            profileImageUrl: data.profileImageUrl || ''
+          });
         } else {
           console.log('No profile found, redirecting to edit');
           // Redirect to edit profile if no profile exists
@@ -136,7 +148,7 @@ export default function TalentProfile() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
-                    {profile.name.charAt(0)}
+                    {profile.name ? profile.name.charAt(0) : 'T'}
                   </div>
                 )}
               </div>
@@ -178,11 +190,15 @@ export default function TalentProfile() {
               <h3 className="text-lg font-semibold text-white">Skills</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill, index) => (
-                <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30">
-                  {skill}
-                </Badge>
-              ))}
+              {profile.skills && profile.skills.length > 0 ? (
+                profile.skills.map((skill, index) => (
+                  <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30">
+                    {skill}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-white/60 text-sm">No skills added yet</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -195,11 +211,15 @@ export default function TalentProfile() {
               <h3 className="text-lg font-semibold text-white">Languages</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {profile.languages.map((language, index) => (
-                <Badge key={index} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
-                  {language}
-                </Badge>
-              ))}
+              {profile.languages && profile.languages.length > 0 ? (
+                profile.languages.map((language, index) => (
+                  <Badge key={index} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
+                    {language}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-white/60 text-sm">No languages added yet</p>
+              )}
             </div>
           </CardContent>
         </Card>

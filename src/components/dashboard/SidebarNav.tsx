@@ -32,11 +32,11 @@ export function SidebarNav({ userRole }: SidebarNavProps) {
   ];
 
   const talentNavItems = [
-    { href: '/dashboard/talent/discover', icon: Home, label: 'Discover' },
-    { href: '/dashboard/talent/matches', icon: Heart, label: 'Matches' },
-    { href: '/dashboard/talent/messages', icon: MessageCircle, label: 'Messages' },
-    { href: '/dashboard/talent/saved', icon: Bookmark, label: 'Saved' },
-    { href: '/dashboard/talent/profile', icon: User, label: 'Profile' },
+    { href: '/talent/discover', icon: Home, label: 'Discover' },
+    { href: '/talent/matches', icon: Heart, label: 'Matches' },
+    { href: '/talent/messages', icon: MessageCircle, label: 'Messages' },
+    { href: '/talent/saved', icon: Bookmark, label: 'Saved' },
+    { href: '/talent/profile', icon: User, label: 'Profile' },
   ];
 
   const navItems = userRole === 'employer' ? employerNavItems : talentNavItems;

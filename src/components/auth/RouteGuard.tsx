@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { debugUserProfile, addDebugUser } from '@/lib/debugUtils';
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -16,22 +17,32 @@ export default function RouteGuard({ children }: RouteGuardProps) {
   useEffect(() => {
     if (loading) return; // Wait for auth to load
 
+    console.log('🔍 RouteGuard Debug:', {
+      user: user?.uid,
+      userProfile: userProfile?.role,
+      pathname,
+      loading
+    });
+
     // Public routes that don't require authentication
-    const publicRoutes = ['/login', '/register', '/admin/login', '/admin/setup'];
+    const publicRoutes = ['/login', '/register', '/admin/login', '/admin/setup', '/debug'];
     const isPublicRoute = publicRoutes.includes(pathname);
 
     // If user is not authenticated and trying to access protected route
     if (!user && !isPublicRoute) {
+      console.log('❌ No user, redirecting to login');
       router.push('/login');
       return;
     }
 
     // If user is authenticated
     if (user && userProfile) {
+      console.log('✅ User authenticated with profile:', userProfile.role);
+      
       // Handle admin routes
       if (pathname.startsWith('/admin')) {
         if (userProfile.role !== 'admin') {
-          // Redirect non-admin users away from admin routes
+          console.log('❌ Non-admin trying to access admin routes');
           router.push('/dashboard');
           return;
         }
@@ -40,7 +51,7 @@ export default function RouteGuard({ children }: RouteGuardProps) {
       // Handle dashboard routes
       if (pathname.startsWith('/dashboard')) {
         if (userProfile.role === 'admin') {
-          // Admin should be in admin panel
+          console.log('🔄 Admin accessing dashboard, redirecting to admin panel');
           router.push('/admin/dashboard');
           return;
         }
@@ -48,25 +59,27 @@ export default function RouteGuard({ children }: RouteGuardProps) {
 
       // If user is on login/register page but already authenticated
       if (isPublicRoute) {
+        console.log('🔄 Authenticated user on public route, redirecting to dashboard');
         // Redirect to appropriate dashboard based on role
         if (userProfile.role === 'admin') {
           router.push('/admin/dashboard');
         } else if (userProfile.role === 'talent') {
-          router.push('/dashboard/talent/discover');
+          router.push('/talent/discover');
         } else if (userProfile.role === 'employer') {
-          router.push('/dashboard/employer/discover');
+          router.push('/employer/discover');
         }
         return;
       }
 
       // Handle root path redirects
       if (pathname === '/') {
+        console.log('🔄 Root path redirect based on role:', userProfile.role);
         if (userProfile.role === 'admin') {
           router.push('/admin/dashboard');
         } else if (userProfile.role === 'talent') {
-          router.push('/dashboard/talent/discover');
+          router.push('/talent/discover');
         } else if (userProfile.role === 'employer') {
-          router.push('/dashboard/employer/discover');
+          router.push('/employer/discover');
         }
         return;
       }
@@ -74,9 +87,26 @@ export default function RouteGuard({ children }: RouteGuardProps) {
 
     // If user is authenticated but no profile (new user)
     if (user && !userProfile && !isPublicRoute) {
-      // Redirect to role selection or onboarding
-      router.push('/select-role');
+      console.log('⚠️ User authenticated but no profile, redirecting to role selection');
+      
+      // Debug: Check if user profile exists in Firestore
+      debugUserProfile(user.uid).then((result) => {
+        if (result) {
+          console.log('🔍 Found user profile in Firestore:', result);
+          // Force refresh auth context
+          window.location.reload();
+        } else {
+          console.log('❌ No user profile found, redirecting to role selection');
+          router.push('/select-role');
+        }
+      });
       return;
+    }
+
+    // If user is authenticated but no profile and on public route
+    if (user && !userProfile && isPublicRoute) {
+      console.log('⚠️ User authenticated but no profile on public route');
+      // Don't redirect, let them stay on login/register page
     }
   }, [user, userProfile, loading, pathname, router]);
 

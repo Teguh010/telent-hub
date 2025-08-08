@@ -101,7 +101,16 @@ export default function EditTalentProfile() {
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
-          setFormData(docSnap.data() as TalentProfile);
+          const data = docSnap.data();
+          setFormData({
+            name: data.name || 'New Talent',
+            country: data.country || 'Unknown',
+            skills: data.skills || [],
+            languages: data.languages || [],
+            bio: data.bio || '',
+            videoPitch: data.videoPitch || '',
+            cultureStyle: data.cultureStyle || ''
+          });
         }
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -121,10 +130,10 @@ export default function EditTalentProfile() {
   };
 
   const handleAddSkill = (skill: string) => {
-    if (!formData.skills.includes(skill) && skill.trim() !== '') {
+    if (!formData.skills?.includes(skill) && skill.trim() !== '') {
       setFormData(prev => ({
         ...prev,
-        skills: [...prev.skills, skill]
+        skills: [...(prev.skills || []), skill]
       }));
       setNewSkill('');
       setAvailableSkills([]);
@@ -134,15 +143,15 @@ export default function EditTalentProfile() {
   const handleRemoveSkill = (skillToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      skills: prev.skills.filter(skill => skill !== skillToRemove)
+      skills: (prev.skills || []).filter(skill => skill !== skillToRemove)
     }));
   };
 
   const handleAddLanguage = () => {
-    if (newLanguage.trim() !== '' && !formData.languages.includes(newLanguage)) {
+    if (newLanguage.trim() !== '' && !formData.languages?.includes(newLanguage)) {
       setFormData(prev => ({
         ...prev,
-        languages: [...prev.languages, newLanguage.trim()]
+        languages: [...(prev.languages || []), newLanguage.trim()]
       }));
       setNewLanguage('');
     }
@@ -151,7 +160,7 @@ export default function EditTalentProfile() {
   const handleRemoveLanguage = (languageToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      languages: prev.languages.filter(lang => lang !== languageToRemove)
+      languages: (prev.languages || []).filter(lang => lang !== languageToRemove)
     }));
   };
 
@@ -398,18 +407,22 @@ export default function EditTalentProfile() {
               </div>
               
               <div className="flex flex-wrap gap-2 mb-4">
-                {formData.skills.map((skill) => (
-                  <Badge key={skill} variant="outline" className="bg-white/20 text-white border-white/30">
-                    {skill}
-                    <button
-                      type="button"
-                      className="ml-1.5 hover:text-red-400"
-                      onClick={() => handleRemoveSkill(skill)}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
+                {formData.skills && formData.skills.length > 0 ? (
+                  formData.skills.map((skill) => (
+                    <Badge key={skill} variant="outline" className="bg-white/20 text-white border-white/30">
+                      {skill}
+                      <button
+                        type="button"
+                        className="ml-1.5 hover:text-red-400"
+                        onClick={() => handleRemoveSkill(skill)}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-white/60 text-sm">No skills added yet</p>
+                )}
               </div>
               
               <div className="relative">
@@ -447,18 +460,22 @@ export default function EditTalentProfile() {
               </div>
               
               <div className="flex flex-wrap gap-2 mb-4">
-                {formData.languages.map((language) => (
-                  <Badge key={language} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
-                    {language}
-                    <button
-                      type="button"
-                      className="ml-1.5 hover:text-red-400"
-                      onClick={() => handleRemoveLanguage(language)}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
+                {formData.languages && formData.languages.length > 0 ? (
+                  formData.languages.map((language) => (
+                    <Badge key={language} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
+                      {language}
+                      <button
+                        type="button"
+                        className="ml-1.5 hover:text-red-400"
+                        onClick={() => handleRemoveLanguage(language)}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-white/60 text-sm">No languages added yet</p>
+                )}
               </div>
               
               <div className="flex space-x-2">

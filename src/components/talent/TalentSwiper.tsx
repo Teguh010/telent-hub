@@ -253,7 +253,7 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
             setIsPlaying(true);
           })
           .catch(e => console.error('Error playing video (muted):', e));
-      }
+    }
     }
   };
 
@@ -295,7 +295,7 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
   if (talents.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
-        <div className="text-center p-6">
+      <div className="text-center p-6">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
@@ -338,58 +338,58 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
             </div>
           </div>
 
-          <div 
-            className="relative w-full h-full"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onMouseDown={handleMouseDown}
-          >
-            <Card
-              ref={cardRef}
-              className={`relative w-full h-full transition-transform duration-200 ease-out ${
-                isDragging ? 'cursor-grabbing' : 'cursor-grab'
+      <div 
+        className="relative w-full h-full"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+      >
+        <Card
+          ref={cardRef}
+          className={`relative w-full h-full transition-transform duration-200 ease-out ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
               } border-0 shadow-2xl`}
-              style={{
-                transform: `translateX(${dragOffset}px) rotate(${rotation}deg)`,
-                opacity,
-              }}
-            >
-              <CardContent className="p-0 h-full">
-                {/* Video Player */}
+          style={{
+            transform: `translateX(${dragOffset}px) rotate(${rotation}deg)`,
+            opacity,
+          }}
+        >
+          <CardContent className="p-0 h-full">
+            {/* Video Player */}
                 <div className="relative w-full h-full bg-black overflow-hidden">
-                  {currentTalent.videoPitch || currentTalent.videoPitchUrl ? (
-                    <div className="relative w-full h-full">
-                      <video
-                        ref={videoRef}
-                        src={currentTalent.videoPitch || currentTalent.videoPitchUrl}
-                        className="w-full h-full object-cover"
-                        loop
+              {currentTalent.videoPitch || currentTalent.videoPitchUrl ? (
+                <div className="relative w-full h-full">
+                  <video
+                    ref={videoRef}
+                    src={currentTalent.videoPitch || currentTalent.videoPitchUrl}
+                    className="w-full h-full object-cover"
+                    loop
                         muted
                         playsInline
-                        onClick={togglePlayPause}
-                        poster={currentTalent.profileImageUrl}
-                        onError={(e) => {
-                          console.error('Error loading video:', e);
-                          setVideoError(true);
-                          const videoElement = e.target as HTMLVideoElement;
-                          if (videoElement) {
-                            videoElement.poster = '/placeholder-video.jpg';
-                          }
-                        }}
-                      />
+                    onClick={togglePlayPause}
+                    poster={currentTalent.profileImageUrl}
+                    onError={(e) => {
+                      console.error('Error loading video:', e);
+                      setVideoError(true);
+                      const videoElement = e.target as HTMLVideoElement;
+                      if (videoElement) {
+                        videoElement.poster = '/placeholder-video.jpg';
+                      }
+                    }}
+                  />
                       
                       {/* Video Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       
                       {/* Play/Pause Button */}
-                      <button
-                        onClick={togglePlayPause}
+                  <button
+                    onClick={togglePlayPause}
                         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-4 rounded-full z-10 hover:bg-white/30 transition-all duration-200"
-                        aria-label={isPlaying ? 'Pause' : 'Play'}
-                      >
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
+                  >
                         {isPlaying ? <Pause size={32} /> : <Play size={32} className="ml-1" />}
-                      </button>
+                  </button>
                       
                       {/* Mute Indicator */}
                       {isPlaying && videoRef.current?.muted && (
@@ -400,8 +400,8 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                           <span>Tap to unmute</span>
                         </div>
                       )}
-                    </div>
-                  ) : videoError ? (
+                </div>
+              ) : videoError ? (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
                       <div className="text-center text-white">
                         <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -409,8 +409,8 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         </div>
                         <span className="text-lg font-medium">Video tidak dapat dimuat</span>
                       </div>
-                    </div>
-                  ) : (
+                </div>
+              ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
                       <div className="text-center text-white">
                         <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -418,9 +418,9 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         </div>
                         <span className="text-lg font-medium">Tidak ada video</span>
                       </div>
-                    </div>
-                  )}
                 </div>
+              )}
+            </div>
 
                 {/* Right Side Action Buttons (TikTok Style) */}
                 <div className="absolute right-4 bottom-32 flex flex-col items-center space-y-6 z-20">
@@ -513,14 +513,14 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                       </div>
                       <div className="flex items-center bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-medium">
                         <Star className="w-4 h-4 mr-1 fill-current" />
-                        {currentTalent.cultureScore}%
-                      </div>
-                    </div>
+                  {currentTalent.cultureScore}%
+                </div>
+              </div>
 
                     <div className="flex items-center text-white/80 mb-3">
                       <MapPin className="w-4 h-4 mr-1" />
                       <span className="text-sm">{currentTalent.country}</span>
-                    </div>
+              </div>
 
                     {/* Bio */}
                     <p className="text-white/90 text-sm leading-relaxed mb-4 line-clamp-2">
@@ -533,19 +533,19 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         <Briefcase className="w-4 h-4 mr-2 text-white/80" />
                         <span className="text-sm font-medium text-white">Skills</span>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
                         {currentTalent.skills.slice(0, 3).map((skill, index) => (
                           <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
+                      {skill}
+                    </Badge>
+                  ))}
                         {currentTalent.skills.length > 3 && (
                           <Badge variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
                             +{currentTalent.skills.length - 3} more
                           </Badge>
                         )}
-                      </div>
-                    </div>
+                </div>
+              </div>
 
                     {/* Languages */}
                     <div className="mb-4">
@@ -553,14 +553,14 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         <Languages className="w-4 h-4 mr-2 text-white/80" />
                         <span className="text-sm font-medium text-white">Languages</span>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {currentTalent.languages.map((language, index) => (
+                <div className="flex flex-wrap gap-2">
+                  {currentTalent.languages.map((language, index) => (
                           <Badge key={index} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30 text-xs">
-                            {language}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+                      {language}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
 
                     {/* Culture Style */}
                     <div className="mb-4">
@@ -585,31 +585,31 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                       <Heart className="w-6 h-6" />
                       <span className="font-medium">Like</span>
                     </button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-            {/* Swipe indicators */}
-            {isDragging && (
-              <>
-                {dragOffset > 50 && (
+        {/* Swipe indicators */}
+        {isDragging && (
+          <>
+            {dragOffset > 50 && (
                   <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-transparent flex items-center justify-center pointer-events-none rounded-lg">
                     <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-full p-6 shadow-2xl">
                       <Heart className="w-12 h-12 text-white fill-current" />
-                    </div>
-                  </div>
-                )}
-                {dragOffset < -50 && (
+                </div>
+              </div>
+            )}
+            {dragOffset < -50 && (
                   <div className="absolute inset-0 bg-gradient-to-l from-red-500/20 to-transparent flex items-center justify-center pointer-events-none rounded-lg">
                     <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-full p-6 shadow-2xl">
                       <X className="w-12 h-12 text-white" />
-                    </div>
-                  </div>
-                )}
-              </>
+                </div>
+              </div>
             )}
-          </div>
+          </>
+        )}
+      </div>
         </div>
       </div>
     </div>
