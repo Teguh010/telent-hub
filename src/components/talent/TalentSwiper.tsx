@@ -28,6 +28,78 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
   const startX = useRef(0);
   const { user } = useAuth();
 
+  // Auto-play video when talent changes
+  useEffect(() => {
+    if (videoRef.current && talents[currentIndex]) {
+      const video = videoRef.current;
+      
+      // Reset video to beginning
+      video.currentTime = 0;
+      
+      // Set video to muted for better autoplay success
+      video.muted = true;
+      
+      // Try to autoplay
+      const playPromise = video.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.log('Autoplay prevented:', error);
+            // Autoplay was prevented, video will need manual play
+            setIsPlaying(false);
+          });
+      }
+    }
+  }, [currentIndex, talents]);
+
+  // Intersection Observer for autoplay when video is visible
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && videoRef.current && !isPlaying) {
+            // Video is visible and not playing, try to autoplay
+            const video = videoRef.current;
+            video.muted = true;
+            
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch((error) => {
+                  console.log('Intersection autoplay prevented:', error);
+                });
+            }
+          } else if (!entry.isIntersecting && videoRef.current && isPlaying) {
+            // Video is not visible and playing, pause it
+            videoRef.current.pause();
+            setIsPlaying(false);
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of video is visible
+        rootMargin: '0px'
+      }
+    );
+
+    observer.observe(videoRef.current);
+
+    return () => {
+      if (videoRef.current) {
+        observer.unobserve(videoRef.current);
+      }
+    };
+  }, [isPlaying, currentIndex]);
+
   // Fetch talents from Firestore
   useEffect(() => {
     const fetchTalents = async () => {
@@ -163,10 +235,25 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play().catch(e => console.error('Error playing video:', e));
+        // Unmute video when user manually plays it
+        videoRef.current.muted = false;
+        videoRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(e => {
+            console.error('Error playing video:', e);
+            // If unmuted play fails, try muted play
+            videoRef.current!.muted = true;
+            return videoRef.current!.play();
+          })
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(e => console.error('Error playing video (muted):', e));
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -278,6 +365,8 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         src={currentTalent.videoPitch || currentTalent.videoPitchUrl}
                         className="w-full h-full object-cover"
                         loop
+                        muted
+                        playsInline
                         onClick={togglePlayPause}
                         poster={currentTalent.profileImageUrl}
                         onError={(e) => {
@@ -301,6 +390,16 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                       >
                         {isPlaying ? <Pause size={32} /> : <Play size={32} className="ml-1" />}
                       </button>
+                      
+                      {/* Mute Indicator */}
+                      {isPlaying && videoRef.current?.muted && (
+                        <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs flex items-center space-x-1">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.794L4.5 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.5l3.883-3.794a1 1 0 011.617.794zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                          <span>Tap to unmute</span>
+                        </div>
+                      )}
                     </div>
                   ) : videoError ? (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
