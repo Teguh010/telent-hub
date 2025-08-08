@@ -56,49 +56,75 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
     }
   }, [currentIndex, talents]);
 
-  // Intersection Observer for autoplay when video is visible
+  // Track if user has manually interacted with the video
+  const userInteractedRef = useRef(false);
+
+  // Handle initial autoplay when video comes into view
   useEffect(() => {
     if (!videoRef.current) return;
 
-    const observer = new IntersectionObserver(
+    let observer: IntersectionObserver | null = null;
+    let isMounted = true;
+
+    const handleVisibilityChange = () => {
+      if (!videoRef.current || !isMounted) return;
+      
+      // Only handle autoplay if user hasn't interacted yet
+      if (document.visibilityState === 'visible' && !userInteractedRef.current) {
+        const video = videoRef.current;
+        if (video.paused) {
+          video.muted = true;
+          video.play()
+            .then(() => {
+              if (isMounted) setIsPlaying(true);
+            })
+            .catch(error => {
+              console.log('Autoplay prevented:', error);
+            });
+        }
+      }
+    };
+
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Set up intersection observer for initial load
+    observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && videoRef.current && !isPlaying) {
-            // Video is visible and not playing, try to autoplay
+        entries.forEach(entry => {
+          if (entry.isIntersecting && videoRef.current && !userInteractedRef.current) {
             const video = videoRef.current;
-            video.muted = true;
-            
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise
+            if (video.paused) {
+              video.muted = true;
+              video.play()
                 .then(() => {
-                  setIsPlaying(true);
+                  if (isMounted) setIsPlaying(true);
                 })
-                .catch((error) => {
-                  console.log('Intersection autoplay prevented:', error);
+                .catch(error => {
+                  console.log('Initial autoplay prevented:', error);
                 });
             }
-          } else if (!entry.isIntersecting && videoRef.current && isPlaying) {
-            // Video is not visible and playing, pause it
-            videoRef.current.pause();
-            setIsPlaying(false);
           }
         });
       },
-      {
-        threshold: 0.5, // Trigger when 50% of video is visible
-        rootMargin: '0px'
-      }
+      { threshold: 0.5, rootMargin: '0px' }
     );
 
     observer.observe(videoRef.current);
 
+    // Initial check in case the video is already visible
+    if (videoRef.current.checkVisibility()) {
+      handleVisibilityChange();
+    }
+
     return () => {
-      if (videoRef.current) {
+      isMounted = false;
+      if (observer && videoRef.current) {
         observer.unobserve(videoRef.current);
       }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isPlaying, currentIndex]);
+  }, [currentIndex]);
 
   // Fetch talents from Firestore
   useEffect(() => {
@@ -231,29 +257,37 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
     };
   }, [isDragging, dragOffset]);
 
-  const togglePlayPause = () => {
-    if (videoRef.current) {
+  const togglePlayPause = async () => {
+    if (!videoRef.current) return;
+    
+    // Mark that user has interacted with the video
+    userInteractedRef.current = true;
+    
+    try {
       if (isPlaying) {
-        videoRef.current.pause();
+        // Pause the video
+        await videoRef.current.pause();
         setIsPlaying(false);
       } else {
-        // Unmute video when user manually plays it
+        // Unmute when user explicitly plays the video
         videoRef.current.muted = false;
-        videoRef.current.play()
-          .then(() => {
+        try {
+          await videoRef.current.play();
+          setIsPlaying(true);
+        } catch (e) {
+          console.error('Error playing video (unmuted):', e);
+          // Fallback to muted play if unmuted play fails
+          videoRef.current.muted = true;
+          try {
+            await videoRef.current.play();
             setIsPlaying(true);
-          })
-          .catch(e => {
-            console.error('Error playing video:', e);
-            // If unmuted play fails, try muted play
-            videoRef.current!.muted = true;
-            return videoRef.current!.play();
-          })
-          .then(() => {
-            setIsPlaying(true);
-          })
-          .catch(e => console.error('Error playing video (muted):', e));
-    }
+          } catch (err) {
+            console.error('Error playing video (muted):', err);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error in togglePlayPause:', error);
     }
   };
 
