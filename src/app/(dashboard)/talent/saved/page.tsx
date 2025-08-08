@@ -21,7 +21,7 @@ const dummySavedItems = [
     companySize: '50-100 employees',
     industry: 'Technology',
     cultureScore: 85,
-    logo: 'https://via.placeholder.com/60x60/6366f1/ffffff?text=TC'
+    logo: 'https://placehold.co/60x60/6366f1/ffffff?text=TC'
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ const dummySavedItems = [
     companySize: '10-50 employees',
     industry: 'E-commerce',
     cultureScore: 92,
-    logo: 'https://via.placeholder.com/60x60/ec4899/ffffff?text=SX'
+    logo: 'https://placehold.co/60x60/ec4899/ffffff?text=SX'
   },
   {
     id: 3,
@@ -53,7 +53,7 @@ const dummySavedItems = [
     companySize: '100-500 employees',
     industry: 'Fintech',
     cultureScore: 78,
-    logo: 'https://via.placeholder.com/60x60/10b981/ffffff?text=GS'
+    logo: 'https://placehold.co/60x60/10b981/ffffff?text=GS'
   },
   {
     id: 4,
@@ -69,7 +69,7 @@ const dummySavedItems = [
     companySize: '20-50 employees',
     industry: 'Design',
     cultureScore: 88,
-    logo: 'https://via.placeholder.com/60x60/f59e0b/ffffff?text=IL'
+    logo: 'https://placehold.co/60x60/f59e0b/ffffff?text=IL'
   }
 ];
 

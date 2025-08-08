@@ -22,7 +22,7 @@ const dummyJobs = [
     cultureScore: 85,
     isLiked: false,
     isSaved: false,
-    logo: 'https://via.placeholder.com/60x60/6366f1/ffffff?text=TC'
+    logo: 'https://placehold.co/60x60/6366f1/ffffff?text=TC'
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ const dummyJobs = [
     cultureScore: 92,
     isLiked: false,
     isSaved: false,
-    logo: 'https://via.placeholder.com/60x60/ec4899/ffffff?text=SX'
+    logo: 'https://placehold.co/60x60/ec4899/ffffff?text=SX'
   },
   {
     id: 3,
@@ -56,7 +56,7 @@ const dummyJobs = [
     cultureScore: 78,
     isLiked: false,
     isSaved: false,
-    logo: 'https://via.placeholder.com/60x60/10b981/ffffff?text=GS'
+    logo: 'https://placehold.co/60x60/10b981/ffffff?text=GS'
   }
 ];
 

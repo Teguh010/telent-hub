@@ -19,7 +19,7 @@ const dummyMatches = [
     isOnline: true,
     lastMessage: 'Hi! We loved your profile and would love to discuss the opportunity.',
     unreadCount: 2,
-    logo: 'https://via.placeholder.com/60x60/6366f1/ffffff?text=TC',
+    logo: 'https://placehold.co/60x60/6366f1/ffffff?text=TC',
     mutualLikes: true
   },
   {
@@ -34,7 +34,7 @@ const dummyMatches = [
     isOnline: false,
     lastMessage: 'Your experience looks perfect for our team!',
     unreadCount: 0,
-    logo: 'https://via.placeholder.com/60x60/ec4899/ffffff?text=SX',
+    logo: 'https://placehold.co/60x60/ec4899/ffffff?text=SX',
     mutualLikes: true
   },
   {
@@ -49,7 +49,7 @@ const dummyMatches = [
     isOnline: true,
     lastMessage: 'When would you be available for an interview?',
     unreadCount: 1,
-    logo: 'https://via.placeholder.com/60x60/10b981/ffffff?text=GS',
+    logo: 'https://placehold.co/60x60/10b981/ffffff?text=GS',
     mutualLikes: true
   },
   {
@@ -64,7 +64,7 @@ const dummyMatches = [
     isOnline: false,
     lastMessage: 'Your portfolio is amazing!',
     unreadCount: 0,
-    logo: 'https://via.placeholder.com/60x60/f59e0b/ffffff?text=IL',
+    logo: 'https://placehold.co/60x60/f59e0b/ffffff?text=IL',
     mutualLikes: true
   }
 ];

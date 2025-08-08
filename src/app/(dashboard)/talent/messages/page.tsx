@@ -16,7 +16,7 @@ const dummyConversations = [
     lastMessage: 'Hi! We loved your profile and would love to discuss the opportunity.',
     lastMessageTime: '2 min ago',
     unreadCount: 2,
-    logo: 'https://via.placeholder.com/60x60/6366f1/ffffff?text=TC',
+    logo: 'https://placehold.co/60x60/6366f1/ffffff?text=TC',
     messages: [
       { id: 1, sender: 'employer', text: 'Hi! We loved your profile and would love to discuss the opportunity.', time: '2 min ago' },
       { id: 2, sender: 'employer', text: 'Are you available for a call tomorrow?', time: '1 min ago' }
@@ -31,7 +31,7 @@ const dummyConversations = [
     lastMessage: 'Your experience looks perfect for our team!',
     lastMessageTime: '1 hour ago',
     unreadCount: 0,
-    logo: 'https://via.placeholder.com/60x60/ec4899/ffffff?text=SX',
+    logo: 'https://placehold.co/60x60/ec4899/ffffff?text=SX',
     messages: [
       { id: 1, sender: 'employer', text: 'Your experience looks perfect for our team!', time: '1 hour ago' },
       { id: 2, sender: 'talent', text: 'Thank you! I would love to learn more about the role.', time: '45 min ago' }
@@ -46,7 +46,7 @@ const dummyConversations = [
     lastMessage: 'When would you be available for an interview?',
     lastMessageTime: '3 hours ago',
     unreadCount: 1,
-    logo: 'https://via.placeholder.com/60x60/10b981/ffffff?text=GS',
+    logo: 'https://placehold.co/60x60/10b981/ffffff?text=GS',
     messages: [
       { id: 1, sender: 'employer', text: 'When would you be available for an interview?', time: '3 hours ago' }
     ]
