@@ -3,19 +3,24 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Briefcase, MapPin, Languages, Star, Edit } from 'lucide-react';
+import { Briefcase, MapPin, Languages, Star, Edit, User, Mail, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Card, CardContent } from '@/components/card';
+import { Badge } from '@/components/badge';
 
 type TalentProfile = {
   name: string;
+  email: string;
   country: string;
   skills: string[];
   languages: string[];
   bio: string;
   videoPitch?: string;
   cultureStyle?: string;
+  cultureScore?: number;
+  profileImageUrl?: string;
 };
 
 export default function TalentProfile() {
@@ -45,7 +50,7 @@ export default function TalentProfile() {
         } else {
           console.log('No profile found, redirecting to edit');
           // Redirect to edit profile if no profile exists
-          router.push('/talent/edit');
+          router.push('/dashboard/talent/edit');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -61,130 +66,173 @@ export default function TalentProfile() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium">Loading profile...</p>
+        </div>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">No profile found</h2>
-        <p className="text-gray-600 mb-6">Please complete your profile to get started.</p>
-        <Link
-          href="/dashboard/talent/edit"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Complete Profile
-        </Link>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+        <div className="text-center p-6">
+          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="w-10 h-10 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">No profile found</h2>
+          <p className="text-white/80 mb-6">Please complete your profile to get started.</p>
+          <Link
+            href="/dashboard/talent/edit"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            Complete Profile
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-      <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-        <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">My Profile</h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">Your personal information and skills</p>
-        </div>
-        <Link
-          href="/dashboard/talent/edit"
-          className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          <Edit className="h-4 w-4 mr-1" /> Edit
-        </Link>
-      </div>
-      <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-        <dl className="sm:divide-y sm:divide-gray-200">
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500">Full name</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {profile.name || 'Not provided'}
-            </dd>
-          </div>
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <MapPin className="h-4 w-4 mr-1" /> Location
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {profile.country || 'Not specified'}
-            </dd>
-          </div>
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500 flex items-start">
-              <Briefcase className="h-4 w-4 mr-1 mt-0.5" /> Skills
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {profile.skills && profile.skills.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {profile.skills.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                'No skills added'
-              )}
-            </dd>
-          </div>
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500 flex items-start">
-              <Languages className="h-4 w-4 mr-1 mt-0.5" /> Languages
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {profile.languages && profile.languages.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {profile.languages.map((language, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                    >
-                      {language}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                'No languages specified'
-              )}
-            </dd>
-          </div>
-          {profile.cultureStyle && (
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500 flex items-center">
-                <Star className="h-4 w-4 mr-1" /> Culture Style
-              </dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {profile.cultureStyle}
-              </dd>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+      {/* Header */}
+      <div className="pt-12 pb-6 px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 text-white" />
             </div>
-          )}
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500">About</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {profile.bio || 'No bio provided'}
-            </dd>
+            <div>
+              <h1 className="text-2xl font-bold text-white">My Profile</h1>
+              <p className="text-white/80 text-sm">Your personal information and skills</p>
+            </div>
           </div>
-          {profile.videoPitch && (
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Video Pitch</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden bg-gray-100">
-                  <video
-                    src={profile.videoPitch}
-                    controls
+          <Link
+            href="/dashboard/talent/edit"
+            className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            Edit
+          </Link>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 pb-24 space-y-6">
+        {/* Profile Card */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-start space-x-4">
+              {/* Avatar */}
+              <div className="w-20 h-20 rounded-full border-4 border-white/30 overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400 flex-shrink-0">
+                {profile.profileImageUrl ? (
+                  <img 
+                    src={profile.profileImageUrl} 
+                    alt={profile.name}
                     className="w-full h-full object-cover"
                   />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
+                    {profile.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+
+              {/* Profile Info */}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl font-bold text-white mb-2">{profile.name}</h2>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center text-white/80">
+                    <Mail className="w-4 h-4 mr-2" />
+                    <span>{profile.email}</span>
+                  </div>
+                  <div className="flex items-center text-white/80">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span>{profile.country}</span>
+                  </div>
+                  {profile.cultureScore && (
+                    <div className="flex items-center text-white/80">
+                      <Star className="w-4 h-4 mr-2" />
+                      <span>Culture Score: {profile.cultureScore}%</span>
+                    </div>
+                  )}
                 </div>
-              </dd>
+
+                {profile.bio && (
+                  <p className="text-white/90 text-sm mt-3 leading-relaxed">{profile.bio}</p>
+                )}
+              </div>
             </div>
-          )}
-        </dl>
+          </CardContent>
+        </Card>
+
+        {/* Skills */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-center mb-4">
+              <Briefcase className="w-5 h-5 mr-2 text-white/80" />
+              <h3 className="text-lg font-semibold text-white">Skills</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {profile.skills.map((skill, index) => (
+                <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30">
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Languages */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-center mb-4">
+              <Languages className="w-5 h-5 mr-2 text-white/80" />
+              <h3 className="text-lg font-semibold text-white">Languages</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {profile.languages.map((language, index) => (
+                <Badge key={index} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
+                  {language}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Culture Style */}
+        {profile.cultureStyle && (
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Sparkles className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Culture Style</h3>
+              </div>
+              <p className="text-white/90">{profile.cultureStyle}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Video Pitch */}
+        {profile.videoPitch && (
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Video Pitch</h3>
+              <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                <video
+                  src={profile.videoPitch}
+                  className="w-full h-full object-cover"
+                  controls
+                  poster={profile.profileImageUrl}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Building, Briefcase, MapPin, Mail, Phone, Globe, Save } from 'lucide-react';
+import { Building, Briefcase, MapPin, Mail, Phone, Globe, Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Card, CardContent } from '@/components/card';
 
 type EmployeeProfile = {
   companyName: string;
@@ -97,7 +98,7 @@ export default function EditEmployeeProfile() {
       }, { merge: true });
       
       // Redirect to profile page after successful save
-      router.push('/employee/profile');
+      router.push('/dashboard/employee/profile');
     } catch (error) {
       console.error('Error saving profile:', error);
       setError('Failed to save profile. Please try again.');
@@ -108,208 +109,220 @@ export default function EditEmployeeProfile() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium">Loading profile...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="md:flex md:items-center md:justify-between mb-8">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold leading-7 text-gray-900 sm:text-xl sm:truncate">
-              {formData.companyName ? `Edit ${formData.companyName}` : 'Create Employer Profile'}
-            </h2>
-          </div>
-          <div className="mt-4 flex md:mt-0 md:ml-4">
-            <Link
-              href="/employee/profile"
-              className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </Link>
-          </div>
-        </div>
-
-        {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+      {/* Header */}
+      <div className="pt-12 pb-6 px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Building className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                {formData.companyName ? `Edit ${formData.companyName}` : 'Create Employer Profile'}
+              </h1>
+              <p className="text-white/80 text-sm">Update your company information</p>
             </div>
           </div>
+          <Link
+            href="/dashboard/employee/profile"
+            className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Link>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 pb-24 space-y-6">
+        {error && (
+          <Card className="bg-red-500/20 backdrop-blur-sm border-red-500/40">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">!</span>
+                </div>
+                <p className="text-red-100">{error}</p>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Company Information</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">Basic information about your company.</p>
-            </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-4">
-                  <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
-                    Company Name *
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Company Information */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Building className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Company Information</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="companyName" className="block text-sm font-medium text-white mb-2">
+                    Company Name <span className="text-red-400">*</span>
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Building className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        name="companyName"
-                        id="companyName"
-                        required
-                        value={formData.companyName}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="Company Name"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-4">
-                  <label htmlFor="position" className="block text-sm font-medium text-gray-700">
-                    Your Position *
-                  </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Briefcase className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        name="position"
-                        id="position"
-                        required
-                        value={formData.position}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="e.g. HR Manager, Recruiter"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-4">
-                  <label htmlFor="industry" className="block text-sm font-medium text-gray-700">
-                    Industry *
-                  </label>
-                  <div className="mt-1">
+                  <div className="relative">
+                    <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
                     <input
                       type="text"
-                      name="industry"
-                      id="industry"
+                      name="companyName"
+                      id="companyName"
                       required
-                      value={formData.industry}
+                      value={formData.companyName}
                       onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      placeholder="e.g. Technology, Healthcare, Finance"
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="Company Name"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                    Location *
+                <div>
+                  <label htmlFor="position" className="block text-sm font-medium text-white mb-2">
+                    Your Position <span className="text-red-400">*</span>
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <MapPin className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        name="location"
-                        id="location"
-                        required
-                        value={formData.location}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="City, Country"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <input
+                      type="text"
+                      name="position"
+                      id="position"
+                      required
+                      value={formData.position}
+                      onChange={handleChange}
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="e.g. HR Manager, Recruiter"
+                    />
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email *
+                <div>
+                  <label htmlFor="industry" className="block text-sm font-medium text-white mb-2">
+                    Industry <span className="text-red-400">*</span>
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="your@email.com"
-                      />
-                    </div>
+                  <input
+                    type="text"
+                    name="industry"
+                    id="industry"
+                    required
+                    value={formData.industry}
+                    onChange={handleChange}
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    placeholder="e.g. Technology, Healthcare, Finance"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-white mb-2">
+                    Location <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <input
+                      type="text"
+                      name="location"
+                      id="location"
+                      required
+                      value={formData.location}
+                      onChange={handleChange}
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="City, Country"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contact Information */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Mail className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Contact Information</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                    Email <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="your@email.com"
+                    />
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                     Phone Number
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Phone className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="tel"
-                        name="phone"
-                        id="phone"
-                        value={formData.phone || ''}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <input
+                      type="tel"
+                      name="phone"
+                      id="phone"
+                      value={formData.phone || ''}
+                      onChange={handleChange}
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="+1 (555) 123-4567"
+                    />
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
-                  <label htmlFor="companyWebsite" className="block text-sm font-medium text-gray-700">
+                <div>
+                  <label htmlFor="companyWebsite" className="block text-sm font-medium text-white mb-2">
                     Company Website
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Globe className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="url"
-                        name="companyWebsite"
-                        id="companyWebsite"
-                        value={formData.companyWebsite || ''}
-                        onChange={handleChange}
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
-                        placeholder="https://example.com"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <input
+                      type="url"
+                      name="companyWebsite"
+                      id="companyWebsite"
+                      value={formData.companyWebsite || ''}
+                      onChange={handleChange}
+                      className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="https://example.com"
+                    />
                   </div>
-                  <div className='mt-1 pt-2'>
-                  <label htmlFor="companySize" className="block text-sm font-medium text-gray-700">
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Company Details */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Building className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Company Details</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="companySize" className="block text-sm font-medium text-white mb-2">
                     Company Size
                   </label>
                   <select
@@ -317,7 +330,7 @@ export default function EditEmployeeProfile() {
                     name="companySize"
                     value={formData.companySize || ''}
                     onChange={handleChange}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                   >
                     <option value="">Select size</option>
                     <option value="1-10 employees">1-10 employees</option>
@@ -329,8 +342,9 @@ export default function EditEmployeeProfile() {
                     <option value="5001+ employees">5001+ employees</option>
                   </select>
                 </div>
-                 <div className="sm:col-span-2 pt-2">
-                  <label htmlFor="foundedYear" className="block text-sm font-medium text-gray-700">
+
+                <div>
+                  <label htmlFor="foundedYear" className="block text-sm font-medium text-white mb-2">
                     Founded Year
                   </label>
                   <input
@@ -341,63 +355,48 @@ export default function EditEmployeeProfile() {
                     max={new Date().getFullYear()}
                     value={formData.foundedYear || ''}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="e.g. 2010"
                   />
                 </div>
-                <div className="pt-2">
-                  <label htmlFor="about" className="block text-sm font-medium text-gray-700">
+
+                <div>
+                  <label htmlFor="about" className="block text-sm font-medium text-white mb-2">
                     About Your Company
                   </label>
-                  <div className="mt-1">
-                    <textarea
-                      id="about"
-                      name="about"
-                      rows={5}
-                      value={formData.about || ''}
-                      onChange={handleChange}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
-                      placeholder="Tell us about your company, culture, and what makes it a great place to work..."
-                    />
-                  </div>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <textarea
+                    id="about"
+                    name="about"
+                    rows={4}
+                    value={formData.about || ''}
+                    onChange={handleChange}
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    placeholder="Tell us about your company, culture, and what makes it a great place to work..."
+                  />
+                  <p className="mt-2 text-sm text-white/60">
                     Brief description about your company.
                   </p>
                 </div>
-                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="pt-5">
-            <div className="flex justify-end">
-              <Link
-                href="/employee/profile"
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={saving}
-                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-5 w-5 mr-2" />
-                    Save Changes
-                  </>
-                )}
-              </button>
-            </div>
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4">
+            <Link
+              href="/dashboard/employee/profile"
+              className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              <Save className="w-4 h-4" />
+              <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+            </button>
           </div>
         </form>
       </div>

@@ -3,10 +3,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Briefcase, Building, MapPin, Mail, Phone, Globe, Edit } from 'lucide-react';
+import { Briefcase, Building, MapPin, Mail, Phone, Globe, Edit, User, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Card, CardContent } from '@/components/card';
+import { Badge } from '@/components/badge';
 
 type EmployeeProfile = {
   companyName: string;
@@ -19,6 +21,7 @@ type EmployeeProfile = {
   about?: string;
   companySize?: string;
   foundedYear?: number;
+  profileImageUrl?: string;
 };
 
 export default function EmployeeProfile() {
@@ -47,7 +50,7 @@ export default function EmployeeProfile() {
           setProfile(docSnap.data() as EmployeeProfile);
         } else {
           console.log('No employee profile found, redirecting to edit');
-          router.push('/employee/edit');
+          router.push('/dashboard/employee/edit');
         }
       } catch (error) {
         console.error('Error fetching employee profile:', error);
@@ -61,132 +64,167 @@ export default function EmployeeProfile() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto mb-4"></div>
+          <p className="text-white text-lg font-medium">Loading profile...</p>
+        </div>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>No profile found. Please create your employer profile.</p>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+        <div className="text-center p-6">
+          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Building className="w-10 h-10 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">No profile found</h2>
+          <p className="text-white/80 mb-6">Please complete your employer profile to get started.</p>
+          <Link
+            href="/dashboard/employee/edit"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            Complete Profile
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{profile.companyName}</h1>
-              <p className="mt-1 text-sm text-gray-500">{profile.position}</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+      {/* Header */}
+      <div className="pt-12 pb-6 px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Building className="w-6 h-6 text-white" />
             </div>
-            <Link 
-              href="/employee/edit"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Profile
-            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-white">{profile.companyName}</h1>
+              <p className="text-white/80 text-sm">{profile.position}</p>
+            </div>
           </div>
-          
-          <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-            <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-              <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500 flex items-center">
-                  <Building className="h-5 w-5 text-gray-400 mr-2" />
-                  Company
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900">{profile.companyName}</dd>
-              </div>
-              
-              <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500 flex items-center">
-                  <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
-                  Position
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900">{profile.position}</dd>
-              </div>
-              
-              <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500 flex items-center">
-                  <MapPin className="h-5 w-5 text-gray-400 mr-2" />
-                  Location
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900">{profile.location}</dd>
-              </div>
-              
-              <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500 flex items-center">
-                  <Mail className="h-5 w-5 text-gray-400 mr-2" />
-                  Email
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900">{profile.email}</dd>
-              </div>
-              
-              {profile.phone && (
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <Phone className="h-5 w-5 text-gray-400 mr-2" />
-                    Phone
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.phone}</dd>
-                </div>
-              )}
-              
-              {profile.companyWebsite && (
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500 flex items-center">
-                    <Globe className="h-5 w-5 text-gray-400 mr-2" />
-                    Website
-                  </dt>
-                  <dd className="mt-1 text-sm">
-                    <a 
-                      href={profile.companyWebsite.startsWith('http') ? profile.companyWebsite : `https://${profile.companyWebsite}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      {profile.companyWebsite}
-                    </a>
-                  </dd>
-                </div>
-              )}
-              
-              {profile.companySize && (
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Company Size
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.companySize}</dd>
-                </div>
-              )}
-              
-              {profile.foundedYear && (
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Founded
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">{profile.foundedYear}</dd>
-                </div>
-              )}
-              
-              {profile.about && (
-                <div className="sm:col-span-2">
-                  <dt className="text-sm font-medium text-gray-500">
-                    About {profile.companyName}
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 whitespace-pre-line">
-                    {profile.about}
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </div>
+          <Link
+            href="/dashboard/employee/edit"
+            className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            Edit
+          </Link>
         </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 pb-24 space-y-6">
+        {/* Company Info Card */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-start space-x-4">
+              {/* Company Logo/Avatar */}
+              <div className="w-20 h-20 rounded-full border-4 border-white/30 overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400 flex-shrink-0">
+                {profile.profileImageUrl ? (
+                  <img 
+                    src={profile.profileImageUrl} 
+                    alt={profile.companyName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white font-bold text-xl">
+                    {profile.companyName.charAt(0)}
+                  </div>
+                )}
+              </div>
+
+              {/* Company Info */}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl font-bold text-white mb-2">{profile.companyName}</h2>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center text-white/80">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    <span>{profile.position}</span>
+                  </div>
+                  <div className="flex items-center text-white/80">
+                    <Mail className="w-4 h-4 mr-2" />
+                    <span>{profile.email}</span>
+                  </div>
+                  <div className="flex items-center text-white/80">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span>{profile.location}</span>
+                  </div>
+                  {profile.phone && (
+                    <div className="flex items-center text-white/80">
+                      <Phone className="w-4 h-4 mr-2" />
+                      <span>{profile.phone}</span>
+                    </div>
+                  )}
+                </div>
+
+                {profile.about && (
+                  <p className="text-white/90 text-sm mt-3 leading-relaxed">{profile.about}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Company Details */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-center mb-4">
+              <Building className="w-5 h-5 mr-2 text-white/80" />
+              <h3 className="text-lg font-semibold text-white">Company Details</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-white/60 text-sm">Industry</p>
+                <p className="text-white font-medium">{profile.industry}</p>
+              </div>
+              {profile.companySize && (
+                <div>
+                  <p className="text-white/60 text-sm">Company Size</p>
+                  <p className="text-white font-medium">{profile.companySize}</p>
+                </div>
+              )}
+              {profile.foundedYear && (
+                <div>
+                  <p className="text-white/60 text-sm">Founded</p>
+                  <p className="text-white font-medium">{profile.foundedYear}</p>
+                </div>
+              )}
+              {profile.companyWebsite && (
+                <div>
+                  <p className="text-white/60 text-sm">Website</p>
+                  <a 
+                    href={profile.companyWebsite} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-purple-300 hover:text-white font-medium"
+                  >
+                    {profile.companyWebsite}
+                  </a>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Industry Badge */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-center mb-4">
+              <Sparkles className="w-5 h-5 mr-2 text-white/80" />
+              <h3 className="text-lg font-semibold text-white">Industry</h3>
+            </div>
+            <Badge variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30 text-lg px-4 py-2">
+              {profile.industry}
+            </Badge>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

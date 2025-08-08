@@ -3,10 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Briefcase, MapPin, Languages, Star, Upload, X, Video } from 'lucide-react';
+import { Briefcase, MapPin, Languages, Star, Upload, X, Video, User, Save, ArrowLeft } from 'lucide-react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
+import { Card, CardContent } from '@/components/card';
+import { Badge } from '@/components/badge';
+import Link from 'next/link';
 
 const countries = [
   'Indonesia',
@@ -152,58 +155,58 @@ export default function EditTalentProfile() {
     }));
   };
 
-const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file || !user) return;
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
 
-  setIsUploading(true);
-  setError('');
+    setIsUploading(true);
+    setError('');
 
-  try {
-    const storageRef = ref(storage, `talents/${user.uid}/video-pitch/${Date.now()}-${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file, {
-      contentType: file.type,
-      customMetadata: {
-        uploadedBy: user.uid,
-        originalName: file.name
-      }
-    });
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Progress function
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (error) => {
-        // Error function
-        console.error('Upload error:', error);
-        setError('Upload failed: ' + error.message);
-        setIsUploading(false);
-      },
-      async () => {
-        // Complete function
-        try {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setFormData(prev => ({
-            ...prev,
-            videoPitch: downloadURL
-          }));
-          setSuccess('Video uploaded successfully!');
-        } catch (error) {
-          console.error('Error getting download URL:', error);
-          setError('Failed to get download URL');
-        } finally {
-          setIsUploading(false);
+    try {
+      const storageRef = ref(storage, `talents/${user.uid}/video-pitch/${Date.now()}-${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file, {
+        contentType: file.type,
+        customMetadata: {
+          uploadedBy: user.uid,
+          originalName: file.name
         }
-      }
-    );
-  } catch (error) {
-    console.error('Upload error:', error);
-    setError('Failed to start upload');
-    setIsUploading(false);
-  }
-};
+      });
+
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          // Progress function
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          // Error function
+          console.error('Upload error:', error);
+          setError('Upload failed: ' + error.message);
+          setIsUploading(false);
+        },
+        async () => {
+          // Complete function
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setFormData(prev => ({
+              ...prev,
+              videoPitch: downloadURL
+            }));
+            setSuccess('Video uploaded successfully!');
+          } catch (error) {
+            console.error('Error getting download URL:', error);
+            setError('Failed to get download URL');
+          } finally {
+            setIsUploading(false);
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Upload error:', error);
+      setError('Failed to start upload');
+      setIsUploading(false);
+    }
+  };
 
   const handleRemoveVideo = () => {
     setFormData(prev => ({
@@ -257,80 +260,90 @@ const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="md:flex md:items-center md:justify-between">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            Edit Profile
-          </h2>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900">
+      {/* Header */}
+      <div className="pt-12 pb-6 px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Edit Profile</h1>
+              <p className="text-white/80 text-sm">Update your talent profile</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/talent/profile"
+            className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Link>
         </div>
       </div>
 
-      {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <X className="h-5 w-5 text-red-400" aria-hidden="true" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">{error}</h3>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Content */}
+      <div className="px-6 pb-24 space-y-6">
+        {/* Error/Success Messages */}
+        {error && (
+          <Card className="bg-red-500/20 backdrop-blur-sm border-red-500/40">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3">
+                <X className="w-5 h-5 text-red-400" />
+                <p className="text-red-100">{error}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      {success && (
-        <div className="rounded-md bg-green-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <Star className="h-5 w-5 text-green-400" aria-hidden="true" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">{success}</h3>
-            </div>
-          </div>
-        </div>
-      )}
+        {success && (
+          <Card className="bg-green-500/20 backdrop-blur-sm border-green-500/40">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3">
+                <Star className="w-5 h-5 text-green-400" />
+                <p className="text-green-100">{success}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      <form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-        <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-          <div className="space-y-6 sm:space-y-5">
-            <div>
-              <h3 className="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                This information will be displayed publicly so be careful what you share.
-              </p>
-            </div>
-
-            <div className="space-y-6 sm:space-y-5">
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Full name <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Personal Information */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <User className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Personal Information</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
+                    Full name <span className="text-red-400">*</span>
+                  </label>
                   <input
                     type="text"
                     name="name"
                     id="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    placeholder="Your full name"
                     required
                   />
                 </div>
-              </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="country" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Country <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-white mb-2">
+                    Country <span className="text-red-400">*</span>
+                  </label>
                   <select
                     id="country"
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
-                    className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                     required
                   >
                     <option value="">Select a country</option>
@@ -341,251 +354,225 @@ const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     ))}
                   </select>
                 </div>
-              </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Bio <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
+                <div>
+                  <label htmlFor="bio" className="block text-sm font-medium text-white mb-2">
+                    Bio <span className="text-red-400">*</span>
+                  </label>
                   <textarea
                     id="bio"
                     name="bio"
                     rows={3}
-                    className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     value={formData.bio}
                     onChange={handleInputChange}
+                    placeholder="Tell us about yourself..."
                     required
                   />
-                  <p className="mt-2 text-sm text-gray-500">Write a few sentences about yourself.</p>
                 </div>
-              </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="cultureStyle" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Work Culture Style
-                </label>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
+                <div>
+                  <label htmlFor="cultureStyle" className="block text-sm font-medium text-white mb-2">
+                    Work Culture Style
+                  </label>
                   <input
                     type="text"
                     name="cultureStyle"
                     id="cultureStyle"
                     value={formData.cultureStyle || ''}
                     onChange={handleInputChange}
-                    className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="E.g., Agile, Remote-first, Startup, etc."
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <div className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Skills <span className="text-red-500">*</span>
-                </div>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800"
-                      >
-                        {skill}
-                        <button
-                          type="button"
-                          className="ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-500 focus:bg-indigo-500 focus:text-white focus:outline-none"
-                          onClick={() => handleRemoveSkill(skill)}
-                        >
-                          <span className="sr-only">Remove skill</span>
-                          <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                            <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-                          </svg>
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
-                      placeholder="Add a skill"
-                    />
-                    {availableSkills.length > 0 && (
-                      <ul className="absolute z-10 mt-1 max-w-xs rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        {availableSkills.map((skill) => (
-                          <li
-                            key={skill}
-                            className="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-100"
-                            onClick={() => handleAddSkill(skill)}
-                          >
-                            {skill}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    <div className="mt-1 text-xs text-gray-500">
-                      Type to search and add skills from the list
-                    </div>
-                  </div>
-                </div>
+          {/* Skills */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Briefcase className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Skills <span className="text-red-400">*</span></h3>
               </div>
-
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <div className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Languages <span className="text-red-500">*</span>
-                </div>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.languages.map((language) => (
-                      <span
-                        key={language}
-                        className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
-                      >
-                        {language}
-                        <button
-                          type="button"
-                          className="ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-green-400 hover:bg-green-200 hover:text-green-500 focus:bg-green-500 focus:text-white focus:outline-none"
-                          onClick={() => handleRemoveLanguage(language)}
-                        >
-                          <span className="sr-only">Remove language</span>
-                          <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                            <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-                          </svg>
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newLanguage}
-                      onChange={(e) => setNewLanguage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleAddLanguage();
-                        }
-                      }}
-                      className="block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      placeholder="Add a language"
-                    />
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                {formData.skills.map((skill) => (
+                  <Badge key={skill} variant="outline" className="bg-white/20 text-white border-white/30">
+                    {skill}
                     <button
                       type="button"
-                      onClick={handleAddLanguage}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="ml-1.5 hover:text-red-400"
+                      onClick={() => handleRemoveSkill(skill)}
                     >
-                      Add
+                      <X className="w-3 h-3" />
                     </button>
-                  </div>
-                </div>
+                  </Badge>
+                ))}
               </div>
-
-              <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
-                <div className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                  Video Pitch
-                </div>
-                <div className="mt-1 sm:col-span-2 sm:mt-0">
-                  {formData.videoPitch ? (
-                    <div className="relative">
-                      <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden bg-gray-100">
-                        <video
-                          src={formData.videoPitch}
-                          controls
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+              
+              <div className="relative">
+                <input
+                  type="text"
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Add a skill"
+                />
+                {availableSkills.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg">
+                    {availableSkills.map((skill) => (
                       <button
+                        key={skill}
                         type="button"
-                        onClick={handleRemoveVideo}
-                        className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        className="w-full text-left px-3 py-2 text-white hover:bg-white/20"
+                        onClick={() => handleAddSkill(skill)}
                       >
-                        <X className="h-4 w-4" />
+                        {skill}
                       </button>
-                    </div>
-                  ) : (
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                      <div className="space-y-1 text-center">
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          stroke="currentColor"
-                          fill="none"
-                          viewBox="0 0 48 48"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <div className="flex text-sm text-gray-600">
-                          <label
-                            htmlFor="video-upload"
-                            className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-                          >
-                            <span>Upload a video pitch</span>
-                            <input
-                              id="video-upload"
-                              name="video-upload"
-                              type="file"
-                              className="sr-only"
-                              accept="video/*"
-                              onChange={handleVideoUpload}
-                              ref={fileInputRef}
-                            />
-                          </label>
-                          <p className="pl-1">or drag and drop</p>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          MP4, WebM up to 50MB (30-60 seconds recommended)
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {isUploading && (
-                    <div className="mt-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div
-                          className="bg-indigo-600 h-2.5 rounded-full"
-                          style={{ width: `${uploadProgress}%` }}
-                        ></div>
-                      </div>
-                      <p className="mt-1 text-xs text-gray-500">
-                        Uploading: {Math.round(uploadProgress)}%
-                      </p>
-                    </div>
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
-        </div>
+            </CardContent>
+          </Card>
 
-        <div className="pt-5">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          {/* Languages */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Languages className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Languages <span className="text-red-400">*</span></h3>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                {formData.languages.map((language) => (
+                  <Badge key={language} variant="secondary" className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border-purple-500/30">
+                    {language}
+                    <button
+                      type="button"
+                      className="ml-1.5 hover:text-red-400"
+                      onClick={() => handleRemoveLanguage(language)}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newLanguage}
+                  onChange={(e) => setNewLanguage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddLanguage();
+                    }
+                  }}
+                  className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Add a language"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddLanguage}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+                >
+                  Add
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Video Pitch */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <Video className="w-5 h-5 mr-2 text-white/80" />
+                <h3 className="text-lg font-semibold text-white">Video Pitch</h3>
+              </div>
+              
+              {formData.videoPitch ? (
+                <div className="relative">
+                  <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                    <video
+                      src={formData.videoPitch}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveVideo}
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white hover:bg-red-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-white/20 border-dashed rounded-lg p-6 text-center">
+                  <Video className="w-12 h-12 text-white/50 mx-auto mb-4" />
+                  <div className="text-white/70 mb-4">
+                    <label
+                      htmlFor="video-upload"
+                      className="cursor-pointer text-purple-300 hover:text-purple-200"
+                    >
+                      <span>Upload a video pitch</span>
+                      <input
+                        id="video-upload"
+                        name="video-upload"
+                        type="file"
+                        className="sr-only"
+                        accept="video/*"
+                        onChange={handleVideoUpload}
+                        ref={fileInputRef}
+                      />
+                    </label>
+                    <p className="text-sm mt-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-white/50">
+                    MP4, WebM up to 50MB (30-60 seconds recommended)
+                  </p>
+                </div>
+              )}
+              
+              {isUploading && (
+                <div className="mt-4">
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                  <p className="mt-2 text-sm text-white/70">
+                    Uploading: {Math.round(uploadProgress)}%
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4">
+            <Link
+              href="/dashboard/talent/profile"
+              className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
             >
               Cancel
-            </button>
+            </Link>
             <button
               type="submit"
               disabled={isSubmitting || isUploading}
-              className={`ml-3 inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                isSubmitting || isUploading
-                  ? 'bg-indigo-300 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
-              }`}
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              {isSubmitting ? 'Saving...' : 'Save'}
+              <Save className="w-4 h-4" />
+              <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
