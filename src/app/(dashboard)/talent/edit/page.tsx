@@ -249,7 +249,7 @@ export default function EditTalentProfile() {
       setSuccess('Profile updated successfully!');
       // Redirect to profile page after a short delay
       setTimeout(() => {
-        router.push('/dashboard/talent/profile');
+        router.push('/talent/profile');
       }, 1500);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -274,7 +274,7 @@ export default function EditTalentProfile() {
             </div>
           </div>
           <Link
-            href="/dashboard/talent/profile"
+            href="/talent/profile"
             className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -557,7 +557,7 @@ export default function EditTalentProfile() {
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <Link
-              href="/dashboard/talent/profile"
+              href="/talent/profile"
               className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
             >
               Cancel

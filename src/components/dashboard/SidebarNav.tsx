@@ -24,19 +24,19 @@ export function SidebarNav({ userRole }: SidebarNavProps) {
   const { logout } = useAuth();
 
   const employerNavItems = [
-    { href: '/dashboard/employer/discover', icon: Home, label: 'Discover' },
-    { href: '/dashboard/employer/saved', icon: Bookmark, label: 'Saved' },
-    { href: '/dashboard/employer/matches', icon: Heart, label: 'Matches' },
-    { href: '/dashboard/employer/messages', icon: MessageCircle, label: 'Messages' },
-    { href: '/dashboard/employer/profile', icon: User, label: 'Profile' },
+    { href: '/employer/discover', icon: Home, label: 'Discover' },
+    { href: '/employer/saved', icon: Bookmark, label: 'Saved' },
+    { href: '/employer/matches', icon: Heart, label: 'Matches' },
+    { href: '/employer/messages', icon: MessageCircle, label: 'Messages' },
+    { href: '/employer/profile', icon: User, label: 'Profile' },
   ];
 
   const talentNavItems = [
-    { href: '/dashboard/talent', icon: Home, label: 'Home' },
+    { href: '/dashboard/talent/discover', icon: Home, label: 'Discover' },
     { href: '/dashboard/talent/matches', icon: Heart, label: 'Matches' },
     { href: '/dashboard/talent/messages', icon: MessageCircle, label: 'Messages' },
+    { href: '/dashboard/talent/saved', icon: Bookmark, label: 'Saved' },
     { href: '/dashboard/talent/profile', icon: User, label: 'Profile' },
-    { href: '/dashboard/talent/settings', icon: Settings, label: 'Settings' },
   ];
 
   const navItems = userRole === 'employer' ? employerNavItems : talentNavItems;

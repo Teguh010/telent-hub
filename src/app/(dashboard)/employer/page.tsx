@@ -35,7 +35,7 @@ export default function EmployerDashboard() {
             <p className="text-gray-600 mb-4">
               Browse through talented candidates and find the perfect match for your company.
             </p>
-            <Link href="/dashboard/employer/discover">
+            <Link href="/employer/discover">
               <Button className="w-full">Start Browsing</Button>
             </Link>
           </div>
@@ -45,7 +45,7 @@ export default function EmployerDashboard() {
             <p className="text-gray-600 mb-4">
               View candidates you've shown interest in or saved for later.
             </p>
-            <Link href="/dashboard/employer/saved">
+            <Link href="/employer/saved">
               <Button variant="outline" className="w-full">View Saved</Button>
             </Link>
           </div>
@@ -56,10 +56,10 @@ export default function EmployerDashboard() {
               Manage your company information and job postings.
             </p>
             <div className="flex gap-4">
-              <Link href="/dashboard/employer/profile">
+              <Link href="/employer/profile">
                 <Button variant="outline">View Profile</Button>
               </Link>
-              <Link href="/dashboard/employer/jobs">
+              <Link href="/employer/jobs">
                 <Button variant="outline">Manage Jobs</Button>
               </Link>
             </div>

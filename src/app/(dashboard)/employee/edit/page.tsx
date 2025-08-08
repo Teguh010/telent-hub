@@ -98,7 +98,7 @@ export default function EditEmployeeProfile() {
       }, { merge: true });
       
       // Redirect to profile page after successful save
-      router.push('/dashboard/employee/profile');
+      router.push('/employee/profile');
     } catch (error) {
       console.error('Error saving profile:', error);
       setError('Failed to save profile. Please try again.');
@@ -135,7 +135,7 @@ export default function EditEmployeeProfile() {
             </div>
           </div>
           <Link
-            href="/dashboard/employee/profile"
+            href="/employee/profile"
             className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -384,7 +384,7 @@ export default function EditEmployeeProfile() {
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <Link
-              href="/dashboard/employee/profile"
+              href="/employee/profile"
               className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
             >
               Cancel

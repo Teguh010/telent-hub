@@ -50,7 +50,7 @@ export default function TalentProfile() {
         } else {
           console.log('No profile found, redirecting to edit');
           // Redirect to edit profile if no profile exists
-          router.push('/dashboard/talent/edit');
+          router.push('/talent/edit');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -85,7 +85,7 @@ export default function TalentProfile() {
           <h2 className="text-2xl font-bold text-white mb-4">No profile found</h2>
           <p className="text-white/80 mb-6">Please complete your profile to get started.</p>
           <Link
-            href="/dashboard/talent/edit"
+            href="/talent/edit"
             className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
           >
             <Edit className="w-4 h-4 mr-2" />
@@ -111,7 +111,7 @@ export default function TalentProfile() {
             </div>
           </div>
           <Link
-            href="/dashboard/talent/edit"
+            href="/talent/edit"
             className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all border border-white/30"
           >
             <Edit className="w-4 h-4 mr-2" />

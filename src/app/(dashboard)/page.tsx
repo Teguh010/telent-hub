@@ -23,14 +23,14 @@ export default function DashboardPage() {
         // Cek apakah pengguna adalah talent
         const talentDoc = await getDoc(doc(db, 'talents', user.uid));
         if (talentDoc.exists()) {
-          router.push('/dashboard/talent/profile');
+          router.push('/talent/profile');
           return;
         }
         
         // Cek apakah pengguna adalah employer
         const employerDoc = await getDoc(doc(db, 'employers', user.uid));
         if (employerDoc.exists()) {
-          router.push('/dashboard/employer/discover');
+          router.push('/employer/discover');
           return;
         }
         

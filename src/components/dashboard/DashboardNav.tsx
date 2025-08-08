@@ -9,13 +9,13 @@ import { usePathname } from 'next/navigation';
 
 const navigation = {
   talent: [
-    { name: 'Profile', href: '/dashboard/talent/profile' },
-    { name: 'Edit Profile', href: '/dashboard/talent/edit' },
+    { name: 'Profile', href: '/talent/profile' },
+    { name: 'Edit Profile', href: '/talent/edit' },
   ],
   employer: [
-    { name: 'Discover', href: '/dashboard/employer/discover' },
-    { name: 'Saved', href: '/dashboard/employer/saved' },
-    { name: 'Browse', href: '/dashboard/employer/browse' },
+    { name: 'Discover', href: '/employer/discover' },
+    { name: 'Saved', href: '/employer/saved' },
+    { name: 'Browse', href: '/employer/browse' },
   ],
 };
 

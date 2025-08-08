@@ -13,7 +13,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   
   // Determine user role from pathname
-  const userRole = pathname.startsWith('/dashboard/employer') ? 'employer' : 'talent';
+  const userRole = pathname.startsWith('/employer') ? 'employer' : 'talent';
 
   return (
     <div className="min-h-screen bg-gray-50">

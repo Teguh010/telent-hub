@@ -8,7 +8,7 @@ export default function EmployeeDashboard() {
 
   useEffect(() => {
     // Redirect to the employee's profile page with correct route group
-    router.replace('/dashboard/employee/profile');
+    router.replace('/employee/profile');
   }, [router]);
 
   return (

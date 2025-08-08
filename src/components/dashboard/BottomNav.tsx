@@ -23,67 +23,61 @@ export function BottomNav({ userRole }: BottomNavProps) {
 
   const employerNavItems = [
     {
-      href: '/dashboard/employer/discover',
+      href: '/employer/discover',
       icon: Home,
       label: 'Discover',
-      active: pathname === '/dashboard/employer/discover'
+      active: pathname === '/employer/discover'
     },
     {
-      href: '/dashboard/employer/saved',
+      href: '/employer/saved',
       icon: Bookmark,
       label: 'Saved',
-      active: pathname === '/dashboard/employer/saved'
+      active: pathname === '/employer/saved'
     },
     {
-      href: '/dashboard/employer/matches',
+      href: '/employer/matches',
       icon: Heart,
       label: 'Matches',
-      active: pathname === '/dashboard/employer/matches'
+      active: pathname === '/employer/matches'
     },
     {
-      href: '/dashboard/employer/messages',
+      href: '/employer/messages',
       icon: MessageCircle,
       label: 'Messages',
-      active: pathname === '/dashboard/employer/messages'
+      active: pathname === '/employer/messages'
     },
     {
-      href: '/dashboard/employer/profile',
+      href: '/employer/profile',
       icon: User,
       label: 'Profile',
-      active: pathname === '/dashboard/employer/profile'
+      active: pathname === '/employer/profile'
     }
   ];
 
   const talentNavItems = [
     {
-      href: '/dashboard/talent',
-      icon: Home,
-      label: 'Home',
-      active: pathname === '/dashboard/talent'
+      href: '/talent/discover',
+      icon: Briefcase,
+      label: 'Discover',
+      active: pathname === '/talent/discover'
     },
     {
-      href: '/dashboard/talent/matches',
+      href: '/talent/matches',
       icon: Heart,
       label: 'Matches',
-      active: pathname === '/dashboard/talent/matches'
+      active: pathname === '/talent/matches'
     },
     {
-      href: '/dashboard/talent/messages',
+      href: '/talent/messages',
       icon: MessageCircle,
       label: 'Messages',
-      active: pathname === '/dashboard/talent/messages'
+      active: pathname === '/talent/messages'
     },
     {
-      href: '/dashboard/talent/profile',
+      href: '/talent/profile',
       icon: User,
       label: 'Profile',
-      active: pathname === '/dashboard/talent/profile'
-    },
-    {
-      href: '/dashboard/talent/settings',
-      icon: Settings,
-      label: 'Settings',
-      active: pathname === '/dashboard/talent/settings'
+      active: pathname === '/talent/profile'
     }
   ];
 

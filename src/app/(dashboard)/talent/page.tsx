@@ -8,7 +8,7 @@ export default function TalentDashboard() {
 
   useEffect(() => {
     // Redirect to the talent's profile page with correct route group
-    router.replace('/dashboard/talent/profile');
+    router.replace('/talent/profile');
   }, [router]);
 
   return (
