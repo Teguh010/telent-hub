@@ -21,7 +21,7 @@ export default function DashboardLayout({
       <SidebarNav userRole={userRole} />
 
       {/* Page Content */}
-      <div className="md:pl-64 pb-20 md:pb-0">
+      <div className="md:pl-64 md:pb-0">
         <main>{children}</main>
       </div>
 

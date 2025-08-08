@@ -170,12 +170,12 @@ export const getUnseenTalents = async (employerId: string): Promise<TalentProfil
     console.log('Total talents in database:', talentsSnapshot.docs.length);
     console.log('Seen talent IDs:', seenTalentIds);
     
-    // Filter out seen talents
+    // Filter out seen talents and those without videoPitch
     const unseenTalents = talentsSnapshot.docs
-      .filter(doc => !seenTalentIds.includes(doc.id))
+      .filter(doc => !seenTalentIds.includes(doc.id) && doc.data().videoPitch)
       .map(doc => {
         const data = doc.data();
-        console.log('Processing talent:', doc.id, data.name);
+        console.log('Processing talent with video pitch:', doc.id, data.name);
         return {
           id: doc.id,
           ...data

@@ -360,10 +360,10 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
   const opacity = Math.min(1, 100 / Math.abs(dragOffset || 1));
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 overflow-hidden">
+    <div className="relative w-full h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-red-900 overflow-hidden">
       {/* Mobile: Full screen, Desktop: Mobile width, full height */}
-      <div className="md:flex md:items-center md:justify-center md:h-full">
-        <div className="relative w-full h-full md:w-[475px] md:h-full  md:overflow-hidden md:shadow-2xl">
+      <div className="h-full md:flex md:items-center md:justify-center">
+        <div className="relative min-w-[400px] h-full md:w-[475px] md:max-h-[90vh] md:overflow-hidden md:shadow-2xl">
           {/* Progress Bar */}
           <div className="absolute top-0 left-0 right-0 z-50 p-4">
             <div className="flex space-x-1 mb-2">
@@ -388,7 +388,7 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
           </div>
 
       <div 
-        className="relative w-full h-full"
+        className="relative w-full h-full flex flex-col"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -396,19 +396,20 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
       >
         <Card
           ref={cardRef}
-          className={`relative w-full h-full transition-transform duration-200 ease-out ${
+          className={`relative flex-1 flex flex-col transition-transform duration-200 ease-out ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
-              } border-0 shadow-2xl`}
+          } border-0 shadow-2xl`}
           style={{
             transform: `translateX(${dragOffset}px) rotate(${rotation}deg)`,
             opacity,
+            minHeight: 0, // Ensures the card can shrink if needed
           }}
         >
           <CardContent className="p-0 h-full">
             {/* Video Player */}
-                <div className="relative w-full h-full bg-black overflow-hidden">
+                <div className="relative w-full flex-1 bg-black overflow-hidden" style={{ minHeight: 0 }}>
               {currentTalent.videoPitch || currentTalent.videoPitchUrl ? (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-[100vh]">
                   <video
                     ref={videoRef}
                     src={currentTalent.videoPitch || currentTalent.videoPitchUrl}
@@ -472,10 +473,10 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
             </div>
 
                 {/* Right Side Action Buttons (TikTok Style) */}
-                <div className="absolute right-4 bottom-32 flex flex-col items-center space-y-6 z-20">
+                <div className="absolute right-2 sm:right-4 bottom-28 sm:bottom-32 flex flex-col items-center space-y-4 sm:space-y-6 z-20">
                   {/* Profile Avatar */}
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-white overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400">
                       {currentTalent.profileImageUrl ? (
                         <img 
                           src={currentTalent.profileImageUrl} 
@@ -488,8 +489,8 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         </div>
                       )}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-3 h-3 text-white" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <Sparkles className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
                     </div>
                   </div>
 
@@ -549,7 +550,7 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                 </div>
 
                 {/* Bottom Info Section */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 z-20">
                   {/* Talent Info */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-2">
@@ -582,19 +583,19 @@ export function TalentSwiper({ onSwipeComplete }: TalentSwiperProps) {
                         <Briefcase className="w-4 h-4 mr-2 text-white/80" />
                         <span className="text-sm font-medium text-white">Skills</span>
                       </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1 sm:gap-2">
                         {(currentTalent.skills || []).slice(0, 3).map((skill, index) => (
-                          <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
+                          <Badge key={index} variant="outline" className="bg-white/20 text-white border-white/30 text-[10px] sm:text-xs">
                             {skill}
                           </Badge>
                         ))}
                         {currentTalent.skills?.length > 3 && (
-                          <Badge variant="outline" className="bg-white/20 text-white border-white/30 text-xs">
+                          <Badge variant="outline" className="bg-white/20 text-white border-white/30 text-[10px] sm:text-xs">
                             +{(currentTalent.skills.length - 3)} more
                           </Badge>
                         )}
                         {(!currentTalent.skills || currentTalent.skills.length === 0) && (
-                          <span className="text-xs text-white/60">No skills listed</span>
+                          <span className="text-[10px] sm:text-xs text-white/60">No skills listed</span>
                         )}
                 </div>
               </div>
