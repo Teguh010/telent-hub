@@ -26,20 +26,31 @@ export default function TalentProfile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) return;
+      if (!user) {
+        console.log('No user found, redirecting to login');
+        router.push('/login');
+        return;
+      }
       
       try {
+        setLoading(true);
+        console.log('Fetching profile for user:', user.uid);
+        
         const docRef = doc(db, 'talents', user.uid);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
+          console.log('Profile found:', docSnap.data());
           setProfile(docSnap.data() as TalentProfile);
         } else {
+          console.log('No profile found, redirecting to edit');
           // Redirect to edit profile if no profile exists
-          router.push('/dashboard/talent/edit');
+          router.push('/talent/edit');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
+        // Show error to user
+        alert('Gagal memuat profil. Silakan coba lagi.');
       } finally {
         setLoading(false);
       }

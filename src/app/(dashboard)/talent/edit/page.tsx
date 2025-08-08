@@ -152,41 +152,37 @@ export default function EditTalentProfile() {
     }));
   };
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file || !user) return;
 
-    // Validate file type
-    if (!file.type.startsWith('video/')) {
-      setError('Please upload a valid video file');
-      return;
-    }
+  setIsUploading(true);
+  setError('');
 
-    // Validate file size (max 50MB)
-    if (file.size > 50 * 1024 * 1024) {
-      setError('Video file size should be less than 50MB');
-      return;
-    }
+  try {
+    const storageRef = ref(storage, `talents/${user.uid}/video-pitch/${Date.now()}-${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file, {
+      contentType: file.type,
+      customMetadata: {
+        uploadedBy: user.uid,
+        originalName: file.name
+      }
+    });
 
-    setIsUploading(true);
-    setError('');
-    setSuccess('');
-
-    const storageRef = ref(storage, `talents/${user.uid}/video-pitch/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      'state_changed',
+    uploadTask.on('state_changed',
       (snapshot) => {
+        // Progress function
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadProgress(progress);
       },
       (error) => {
+        // Error function
         console.error('Upload error:', error);
-        setError('Failed to upload video. Please try again.');
+        setError('Upload failed: ' + error.message);
         setIsUploading(false);
       },
       async () => {
+        // Complete function
         try {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setFormData(prev => ({
@@ -196,13 +192,18 @@ export default function EditTalentProfile() {
           setSuccess('Video uploaded successfully!');
         } catch (error) {
           console.error('Error getting download URL:', error);
-          setError('Failed to get video URL. Please try again.');
+          setError('Failed to get download URL');
         } finally {
           setIsUploading(false);
         }
       }
     );
-  };
+  } catch (error) {
+    console.error('Upload error:', error);
+    setError('Failed to start upload');
+    setIsUploading(false);
+  }
+};
 
   const handleRemoveVideo = () => {
     setFormData(prev => ({
