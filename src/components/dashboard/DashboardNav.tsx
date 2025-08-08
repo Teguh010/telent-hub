@@ -13,8 +13,9 @@ const navigation = {
     { name: 'Edit Profile', href: '/dashboard/talent/edit' },
   ],
   employer: [
-    { name: 'Browse Talents', href: '/dashboard/employer/browse' },
+    { name: 'Discover', href: '/dashboard/employer/discover' },
     { name: 'Saved', href: '/dashboard/employer/saved' },
+    { name: 'Browse', href: '/dashboard/employer/browse' },
   ],
 };
 
