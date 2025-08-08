@@ -30,7 +30,7 @@ export default function DashboardPage() {
         // Cek apakah pengguna adalah employer
         const employerDoc = await getDoc(doc(db, 'employers', user.uid));
         if (employerDoc.exists()) {
-          router.push('/dashboard/employer/browse');
+          router.push('/dashboard/employer/discover');
           return;
         }
         
